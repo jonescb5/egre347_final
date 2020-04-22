@@ -8,9 +8,6 @@ y_res = 922
 fps = 40
 
 cam = picamera.PiCamera()
-# set camera parameters
-cam.resolution(x_res, y_res)
-cam.framerate = fps
 # create references to the capture array and capture stream
 cap = picamera.array.PiRGBArray(cam, size=(x_res, y_res))
 cap_stream = cam.capture_continuous(cap, format="bgr", use_video_port=True)
