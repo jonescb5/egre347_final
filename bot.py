@@ -21,12 +21,21 @@ for frame in cam.capture_continuous(cap, format='bgr', use_video_port=True):
 
     image = frame.array  # capture a frame
     # do something with it
+
+    #preprocessing
     print("frame got")
     image_blur = cv2.GaussianBlur(image, (11, 11), 0)
     image_hsv = cv2.cvtColor(image_blur, cv2.COLOR_BGR2HSV)
     image_mask = cv2.inRange(image_hsv, gl, gh)
+    image_mask = cv2.erode(image_mask, None, iterations=1)
+    image_mask = cv2.dilate(image_mask, None, iterations=1)
 
-
+    # find contours of the blob in the mask
+    conto = cv2.findContours(image_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # calculate the moment of the image
+    momnt = cv2.moments(conto)
+    # calculated the centroid location of the blob from the moment from
+    loc = (int(momnt["m10"] / momnt["m00"]), int(momnt["m01"] / momnt["m00"]))
     # TESTING STUFF
     cv2.imwrite('mask.jpg', image_mask)
 
