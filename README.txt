@@ -18,3 +18,5 @@ https://www.pyimagesearch.com/2015/03/30/accessing-the-raspberry-pi-camera-with-
 
 blob detection
 https://www.learnopencv.com/blob-detection-using-opencv-python-c/
+
+https://sourceforge.net/p/raspberry-gpio-python/wiki/Home/
