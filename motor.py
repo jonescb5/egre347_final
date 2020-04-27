@@ -11,7 +11,6 @@ class car:
         self.PWMf = 1000
         self.speed = 100
         self.turn_rate = 75
-        gpio.cleanup()
         gpio.setmode(gpio.BCM)
         gpio.setup(self.ena, gpio.OUT)
         gpio.setup(self.in1, gpio.OUT)
@@ -67,7 +66,7 @@ class car:
         print("reverse")
         return
 
-    def rotate_r(self):
+    def rotate_l(self):
 
         gpio.output(self.in1, gpio.HIGH)
         gpio.output(self.in2, gpio.LOW)
@@ -75,10 +74,10 @@ class car:
         gpio.output(self.in4, gpio.LOW)
         self.spa.ChangeDutyCycle(self.turn_rate)
         self.spb.ChangeDutyCycle(self.turn_rate)
-        print("rotate R")
+        print("rotate L")
         return
 
-    def rotate_l(self):
+    def rotate_r(self):
 
         gpio.output(self.in1, gpio.LOW)
         gpio.output(self.in2, gpio.HIGH)
@@ -86,7 +85,7 @@ class car:
         gpio.output(self.in4, gpio.HIGH)
         self.spa.ChangeDutyCycle(self.turn_rate)
         self.spb.ChangeDutyCycle(self.turn_rate)
-        print("rotate L")
+        print("rotate R")
         return
 
     def stop_car(self):
