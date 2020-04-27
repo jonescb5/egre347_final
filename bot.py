@@ -35,8 +35,9 @@ for frame in cam.capture_continuous(cap, format='bgr', use_video_port=True):
     # calculate the moment of the image
     momnt = cv2.moments(conto)
     # calculated the centroid location of the blob from the moment from
-    loc = (int(momnt["m10"] / momnt["m00"]), int(momnt["m01"] / momnt["m00"]))
+    coord = (int(momnt["m10"] / momnt["m00"]), int(momnt["m01"] / momnt["m00"]))
     # TESTING STUFF
+    print(coord)
     cv2.imwrite('mask.jpg', image_mask)
 
     cap.truncate(0)  # reset capture array size to zero. effectively clears the array
@@ -44,4 +45,4 @@ for frame in cam.capture_continuous(cap, format='bgr', use_video_port=True):
     if itr == 0:
         exit()
 
-    itr += 1
+    itr = itr + 1

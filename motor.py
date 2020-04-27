@@ -34,3 +34,23 @@ for x in range (0, 5):
 
 gpio.cleanup()
 print("run")
+
+
+def forward():
+    global speed
+    gpio.output(in1, gpio.LOW)
+    gpio.output(in2, gpio.HIGH)
+    gpio.output(in3, gpio.HIGH)
+    gpio.output(in4, gpio.LOW)
+    spa.ChangeDutyCycle(speed)
+    spb.ChangeDutyCycle(speed)
+
+def reverse():
+    global speed
+    gpio.output(in1, gpio.HIGH)
+    gpio.output(in2, gpio.LOW)
+    gpio.output(in3, gpio.LOW)
+    gpio.output(in4, gpio.HIGH)
+    spa.ChangeDutyCycle(speed)
+    spb.ChangeDutyCycle(speed)
+
