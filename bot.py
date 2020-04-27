@@ -2,9 +2,8 @@ import time
 import picamera
 import picamera.array
 import cv2
+from final_functions import preprocess
 
-gl = (29, 86, 6)
-gh = (64, 255, 255)
 
 cam = picamera.PiCamera()
 # create references to the capture array and capture stream
@@ -23,12 +22,9 @@ for frame in cam.capture_continuous(cap, format='bgr', use_video_port=True):
     # do something with it
 
     #preprocessing
+    image_mask = preprocess(image)
     print("frame got")
-    image_blur = cv2.GaussianBlur(image, (11, 11), 0)
-    image_hsv = cv2.cvtColor(image_blur, cv2.COLOR_BGR2HSV)
-    image_mask = cv2.inRange(image_hsv, gl, gh)
-    image_mask = cv2.erode(image_mask, None, iterations=1)
-    image_mask = cv2.dilate(image_mask, None, iterations=1)
+
 
     # find contours of the blob in the mask
     conto = cv2.findContours(image_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
