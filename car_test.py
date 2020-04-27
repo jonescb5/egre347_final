@@ -1,17 +1,23 @@
 from motor import car
 import time
-
+dur = 2
 vehicle = car()
-time.sleep(3)
+time.sleep(dur)
 vehicle.forward()
-time.sleep(3)
-vehicle.stop_car()
-time.sleep(3)
+time.sleep(dur)
+vehicle.turn_r()
+time.sleep(dur)
+vehicle.forward()
+time.sleep(dur)
+vehicle.turn_l()
+time.sleep(dur)
 vehicle.rotate_l()
-time.sleep(3)
+time.sleep(dur)
 vehicle.rotate_r()
-time.sleep(3)
+time.sleep(dur)
+vehicle.stop_car()
+time.sleep(dur)
 vehicle.reverse()
-time.sleep(3)
+time.sleep(dur)
 vehicle.shutdown_car()
 
