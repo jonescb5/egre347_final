@@ -12,6 +12,7 @@ cap = picamera.array.PiRGBArray(cam)
 time.sleep(2.0)
 cam.capture(cap, format='bgr', use_video_port=True)
 image = cap.array  # capture a frame
-image = preprocess(image)
-cv2.imwrite('pic1.jpg', image)
+image_mask = preprocess(image)
+cv2.imwrite('image.jpg', image)
+cv2.imwrite('image_mask.jpg', image_mask)
 cap.truncate(0)  # reset capture array size to zero. effectively clears the array

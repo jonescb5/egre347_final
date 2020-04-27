@@ -27,15 +27,18 @@ for frame in cam.capture_continuous(cap, format='bgr', use_video_port=True):
 
 
     # find contours of the blob in the mask
-    conto = cv2.findContours(image_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    # calculate the moment of the image
-    momnt = cv2.moments(conto)
+    all_contours = (cv2.findContours(image_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE))[1]
+    biggest_contour = max(all_contours, key=cv2.contourArea)
+    # calculate the moment of the biggest contour
+    contour_moments = cv2.moments(biggest_contour)
     # calculated the centroid location of the blob from the moment from
-    coord = (int(momnt["m10"] / momnt["m00"]), int(momnt["m01"] / momnt["m00"]))
+    centroid_x = int(contour_moments["m10"] / contour_moments["m00"])
+    centroid_y = int(contour_moments["m01"] / contour_moments["m00"])
     # TESTING STUFF
-    print(coord)
-    cv2.imwrite('mask.jpg', image_mask)
-
+    print(centroid_x)
+    print(centroid_y)
+    cv2.circle(image, (centroid_x, centroid_y), 10, (0, 255, 0), 10)
+    cv2.imwrite('cent.jpg', image)
     cap.truncate(0)  # reset capture array size to zero. effectively clears the array
 
     if itr == 0:
