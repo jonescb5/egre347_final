@@ -1,5 +1,9 @@
 import RPi.GPIO as gpio
 
+
+state = "SEARCH"
+
+
 class car:
     def __init__(self):
         self.ena = 12
@@ -102,5 +106,7 @@ class car:
         print("shutdown")
         return
 
-
+    def search(self):
+        self.rotate_l()
+        return
 

@@ -37,5 +37,5 @@ def find_centroid(im):
         return centroid_x, centroid_y
 
     except ValueError:
-        return False
+        return 0, 0
 
