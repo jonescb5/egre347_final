@@ -9,8 +9,8 @@ class car:
         self.in3 = 20
         self.in4 = 21
         self.PWMf = 1000
-        self.speed = 100
-        self.turn_rate = 75
+        self.speed = 50
+        self.turn_rate = 50
         gpio.setmode(gpio.BCM)
         gpio.setup(self.ena, gpio.OUT)
         gpio.setup(self.in1, gpio.OUT)
