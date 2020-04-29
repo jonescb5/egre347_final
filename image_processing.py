@@ -1,11 +1,22 @@
 import cv2
-import picamera
-import picamera.array
-import time
 
 
 centroid_x = -1
 res = (1280, 720)
+green = {
+        'H_low': 100, 'S_low': 20, 'V_low': 10,
+        'H_high': 200, 'S_high': 100, 'V_high': 100
+        }
+
+blue = {
+        'H_low': 200, 'S_low': 20, 'V_low': 10,
+        'H_high': 240, 'S_high': 100, 'V_high': 100
+        }
+
+red = {
+        'H_low': 300, 'S_low': 30, 'V_low': 10,
+        'H_high': 20, 'S_high': 100, 'V_high': 100
+        }
 
 
 def preprocess(image, color):
@@ -13,21 +24,26 @@ def preprocess(image, color):
     # format (H, S, V)
     # H values 0 to 180
     # S & V values 0 to 255
+    global green
     image_blur = cv2.GaussianBlur(image, (11, 11), 0)
     image_hsv = cv2.cvtColor(image_blur, cv2.COLOR_BGR2HSV)
 
-    if color == "red":
-        rlpos = (0, 115, 90)
-        rhpos = (10, 255, 255)
-        rlneg = (170, 115, 90)
-        rhneg = (180, 255, 255)
+    if color == "R":
+        rlpos = (0, int(red['S_low'] * 2.55), int(red['V_low'] * 2.55))
+        rhpos = (int(red['H_high'] / 2), int(red['S_high'] * 2.55), int(red['V_high'] * 2.55))
+        rlneg = (int(red['H_low'] / 2), int(red['S_low'] * 2.55), int(red['V_low'] * 2.55))
+        rhneg = (180, int(red['S_high'] * 2.55), int(red['V_high'] * 2.55))
         image_mask1 = cv2.inRange(image_hsv, rlpos, rhpos)
         image_mask2 = cv2.inRange(image_hsv, rlneg, rhneg)
         image_mask = image_mask1 + image_mask2
-    elif color == "blue":
-        blpos = (80, 80, 80)
-        bhpos = (130, 255, 255)
-        image_mask = cv2.inRange(image_hsv, blpos, bhpos)
+    elif color == "B":
+        b_l = (int(blue['H_low'] / 2), int(blue['S_low'] * 2.55), int(blue['V_low'] * 2.55))
+        b_h = (int(blue['H_high'] / 2), int(blue['S_high'] * 2.55), int(blue['V_high'] * 2.55))
+        image_mask = cv2.inRange(image_hsv, b_l, b_h)
+    elif color == "G":
+        g_l = (int(green['H_low']/2), int(green['S_low'] * 2.55), int(green['V_low'] * 2.55))
+        g_h = (int(green['H_high']/2), int(green['S_high'] * 2.55), int(green['V_high'] * 2.55))
+        image_mask = cv2.inRange(image_hsv, g_l, g_h)
 
     image_mask = cv2.erode(image_mask, None, iterations=2)
     image_mask = cv2.dilate(image_mask, None, iterations=2)
@@ -52,26 +68,5 @@ def find_centroid(im, color):
     else:
         return -1, -1
 
-
-def image_processing():
-
-    global centroid_x
-    global res
-    cam = picamera.PiCamera()
-    cam.resolution = res
-    cam.framerate = 90
-    # create references to the capture array and capture stream
-    # cam.start_preview()
-    cap = picamera.array.PiRGBArray(cam, size=res)
-    # wait for camera to warm up
-    time.sleep(2.0)
-
-    for frame in cam.capture_continuous(cap, format='bgr', use_video_port=True):
-        image = frame.array  # capture a frame
-        # do something with it
-        centroid = find_centroid(image, "blue")
-        centroid_x = centroid[0]
-
-        cap.truncate(0)  # reset capture array size to zero. effectively clears the array
 
 
