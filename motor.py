@@ -1,10 +1,7 @@
-import RPi.GPIO as gpio
+import RPi.GPIO as GPIO
 
 
-state = "SEARCH"
-
-
-class car:
+class L298N:
     def __init__(self):
         self.ena = 12
         self.in1 = 5
@@ -13,100 +10,94 @@ class car:
         self.in3 = 20
         self.in4 = 21
         self.PWMf = 1000
-        self.speed = 50
-        self.turn_rate = 55
-        gpio.setmode(gpio.BCM)
-        gpio.setup(self.ena, gpio.OUT)
-        gpio.setup(self.in1, gpio.OUT)
-        gpio.setup(self.in2, gpio.OUT)
-        gpio.setup(self.enb, gpio.OUT)
-        gpio.setup(self.in3, gpio.OUT)
-        gpio.setup(self.in4, gpio.OUT)
-        self.spa = gpio.PWM(self.ena, self.PWMf)
-        self.spb = gpio.PWM(self.enb, self.PWMf)
+
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(self.ena, GPIO.OUT)
+        GPIO.setup(self.in1, GPIO.OUT)
+        GPIO.setup(self.in2, GPIO.OUT)
+        GPIO.setup(self.enb, GPIO.OUT)
+        GPIO.setup(self.in3, GPIO.OUT)
+        GPIO.setup(self.in4, GPIO.OUT)
+
+        self.spa = GPIO.PWM(self.ena, self.PWMf)
+        self.spb = GPIO.PWM(self.enb, self.PWMf)
         self.spa.start(0)
         self.spb.start(0)
         print("init")
 
+    def forward(self, speed):
+        """drive forward"""
 
-    def forward(self):
+        GPIO.output(self.in1, GPIO.LOW)
+        GPIO.output(self.in2, GPIO.HIGH)
+        GPIO.output(self.in3, GPIO.HIGH)
+        GPIO.output(self.in4, GPIO.LOW)
+        self.spa.ChangeDutyCycle(speed)
+        self.spb.ChangeDutyCycle(speed)
 
-        gpio.output(self.in1, gpio.LOW)
-        gpio.output(self.in2, gpio.HIGH)
-        gpio.output(self.in3, gpio.HIGH)
-        gpio.output(self.in4, gpio.LOW)
-        self.spa.ChangeDutyCycle(self.speed)
-        self.spb.ChangeDutyCycle(self.speed)
-        print("forward")
 
-    def turn_l(self):
+    def turn_l(self, speed, turn_rate):
 
-        gpio.output(self.in1, gpio.LOW)
-        gpio.output(self.in2, gpio.HIGH)
-        gpio.output(self.in3, gpio.HIGH)
-        gpio.output(self.in4, gpio.LOW)
-        self.spa.ChangeDutyCycle(self.turn_rate)
-        self.spb.ChangeDutyCycle(self.speed)
-        print("turn L")
+        GPIO.output(self.in1, GPIO.LOW)
+        GPIO.output(self.in2, GPIO.HIGH)
+        GPIO.output(self.in3, GPIO.HIGH)
+        GPIO.output(self.in4, GPIO.LOW)
+        self.spa.ChangeDutyCycle(turn_rate)
+        self.spb.ChangeDutyCycle(speed)
 
-    def turn_r(self):
 
-        gpio.output(self.in1, gpio.LOW)
-        gpio.output(self.in2, gpio.HIGH)
-        gpio.output(self.in3, gpio.HIGH)
-        gpio.output(self.in4, gpio.LOW)
-        self.spa.ChangeDutyCycle(self.speed)
-        self.spb.ChangeDutyCycle(self.turn_rate)
-        print("turn R")
+    def turn_r(self, speed, turn_rate):
 
-    def reverse(self):
+        GPIO.output(self.in1, GPIO.LOW)
+        GPIO.output(self.in2, GPIO.HIGH)
+        GPIO.output(self.in3, GPIO.HIGH)
+        GPIO.output(self.in4, GPIO.LOW)
+        self.spa.ChangeDutyCycle(speed)
+        self.spb.ChangeDutyCycle(turn_rate)
 
-        gpio.output(self.in1, gpio.HIGH)
-        gpio.output(self.in2, gpio.LOW)
-        gpio.output(self.in3, gpio.LOW)
-        gpio.output(self.in4, gpio.HIGH)
-        self.spa.ChangeDutyCycle(self.speed)
-        self.spb.ChangeDutyCycle(self.speed)
-        print("reverse")
+
+    def reverse(self, speed):
+
+        GPIO.output(self.in1, GPIO.HIGH)
+        GPIO.output(self.in2, GPIO.LOW)
+        GPIO.output(self.in3, GPIO.LOW)
+        GPIO.output(self.in4, GPIO.HIGH)
+        self.spa.ChangeDutyCycle(speed)
+        self.spb.ChangeDutyCycle(speed)
         return
 
-    def rotate_l(self):
+    def rotate_l(self, rate):
 
-        gpio.output(self.in1, gpio.HIGH)
-        gpio.output(self.in2, gpio.LOW)
-        gpio.output(self.in3, gpio.HIGH)
-        gpio.output(self.in4, gpio.LOW)
-        self.spa.ChangeDutyCycle(self.turn_rate)
-        self.spb.ChangeDutyCycle(self.turn_rate)
-        print("rotate L")
+        GPIO.output(self.in1, GPIO.HIGH)
+        GPIO.output(self.in2, GPIO.LOW)
+        GPIO.output(self.in3, GPIO.HIGH)
+        GPIO.output(self.in4, GPIO.LOW)
+        self.spa.ChangeDutyCycle(rate)
+        self.spb.ChangeDutyCycle(rate)
         return
 
-    def rotate_r(self):
+    def rotate_r(self, rate):
 
-        gpio.output(self.in1, gpio.LOW)
-        gpio.output(self.in2, gpio.HIGH)
-        gpio.output(self.in3, gpio.LOW)
-        gpio.output(self.in4, gpio.HIGH)
-        self.spa.ChangeDutyCycle(self.turn_rate)
-        self.spb.ChangeDutyCycle(self.turn_rate)
-        print("rotate R")
+        GPIO.output(self.in1, GPIO.LOW)
+        GPIO.output(self.in2, GPIO.HIGH)
+        GPIO.output(self.in3, GPIO.LOW)
+        GPIO.output(self.in4, GPIO.HIGH)
+        self.spa.ChangeDutyCycle(rate)
+        self.spb.ChangeDutyCycle(rate)
         return
 
     def stop_car(self):
         """stop"""
-        gpio.output(self.in1, gpio.LOW)
-        gpio.output(self.in2, gpio.LOW)
-        gpio.output(self.in3, gpio.LOW)
-        gpio.output(self.in4, gpio.LOW)
-        print("stop")
+        GPIO.output(self.in1, GPIO.LOW)
+        GPIO.output(self.in2, GPIO.LOW)
+        GPIO.output(self.in3, GPIO.LOW)
+        GPIO.output(self.in4, GPIO.LOW)
         return
 
-    def shutdown_car(self):
-        gpio.cleanup()
-        print("shutdown")
-        return
+    def shutdown(self):
+        """shutdown"""
+        GPIO.cleanup()
 
-    def search(self):
-        self.rotate_l()
-        return
+
+
 
