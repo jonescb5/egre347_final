@@ -16,7 +16,7 @@
 
 import RPi.GPIO as GPIO
 
-
+# L298N Motor Driver Class
 class L298N:
     def __init__(self):
         """
