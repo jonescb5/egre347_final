@@ -1,11 +1,14 @@
-from motor import car
+import motor
 import time
 
-vehicle = car()
-while True:
-    vehicle.rotate_r()
-    time.sleep(3)
-    vehicle.rotate_l()
-    time.sleep(3)
+speed = 75
+turn_rate = 35
+
+vehicle = motor.L298N()
+vehicle.turn_l(speed, turn_rate)
+time.sleep(3)
+vehicle.stop_car()
+vehicle.shutdown()
+
 
 

@@ -2,15 +2,18 @@ import time
 import motor
 import image_processing
 import picamera
+import picamera.array
 
-
+ready_flag = False
 centroid_x = -1
 res = (1280, 720)
+
 
 def image_processor(col):
 
     global centroid_x
     global res
+    global ready_flag
     cam = picamera.PiCamera()
     cam.resolution = res
     cam.framerate = 90
@@ -19,6 +22,7 @@ def image_processor(col):
     cap = picamera.array.PiRGBArray(cam, size=res)
     # wait for camera to warm up
     time.sleep(2.0)
+    ready_flag = True
 
     for frame in cam.capture_continuous(cap, format='bgr', use_video_port=True):
         image = frame.array  # capture a frame
@@ -29,24 +33,28 @@ def image_processor(col):
         cap.truncate(0)  # reset capture array size to zero. effectively clears the array
 
 
-
 def vehicle_control():
     """fsm"""
 
     global centroid_x
     global res
+    global ready_flag
     lat_l = 2*(res[0]/5)
     lat_r = 3*lat_l
     vehicle = motor.L298N()
+    time.sleep(5)
+    # while ~ready_flag:
+    #     time.sleep(0.1)
+
     try:
         speed = 75
-        turn_rate = 50
+        turn_rate = 35
 
         while True:
 
             if centroid_x < 0:
                 vehicle.rotate_r(75)
-                time.sleep(0.1)
+                time.sleep(0.05)
                 vehicle.rotate_l(25)
                 time.sleep(0.05)
                 vehicle.stop_car()

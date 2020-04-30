@@ -7,7 +7,7 @@ import image_processing
 res = (1280, 720)
 
 proc_check = True
-col = "R"
+col = "G"
 
 cam = picamera.PiCamera()
 cam.resolution = res
