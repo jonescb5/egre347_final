@@ -1,8 +1,27 @@
+# ******************************************************************
+# Program: bot.py
+#
+# Programmer: Christopher Jones
+#
+# Due Date: April 30, 2020
+#
+# EGRE 347, Spring 2020       Instructor: Robert Klenke
+#
+# Pledge: I have neither given nor received unauthorized aid on this program.
+#
+# Description: Defines image processing functions for target acquisition using the openCV library
+#
+# ******************************************************************
 import cv2
 
-
+# The x coordinate of the centroid (global variable) initialized to -1 signifying
+# that object was found
 centroid_x = -1
+# the resolution initialized to the default
 res = (1280, 720)
+
+# Dictionaries of the HSV values of the targets. This is done for easy calibration and tuning.
+# Lighting conditions easily effect these values. An auto calibration sequence COULD be implemented.
 green = {
         'H_low': 100, 'S_low': 20, 'V_low': 10,
         'H_high': 200, 'S_high': 100, 'V_high': 100
@@ -20,7 +39,24 @@ red = {
 
 
 def preprocess(image, color):
-    """does image preprocessing"""
+    """
+    Creates a discriminatory image mask for a given color target
+
+    This function takes a BGR image and creates a binary image mask for the given color of the target.
+    Basic preprocessing functions are used to optimize the image mask for target detection. This function returns a
+    raw mask of the image whether there is a target or not. Given the arguments 'image' and 'color' it masks out all
+    pixels that do not match the range specified by the color dictionaries turning them to black. Those pixels which
+    are acceptable appear in white. If a target of the specified color range is not present in the frame the
+    function will return an entirely black image mask.
+
+    Parameters:
+    image (BGR image): a raw capture from the RPi camera module
+    color (string): selects the color of the target. Accepts "B", "G", or "R"
+
+    Returns:
+    N/A
+
+    """
 
     # Blur the image to soften sharp details
     image_blur = cv2.GaussianBlur(image, (11, 11), 0)
@@ -68,7 +104,21 @@ def preprocess(image, color):
 
 
 def find_centroid(im, color):
-    """find the centroid"""
+    """
+    Returns the x, y coordinates of the centroid of a target of the selected color
+
+    This function utilizes the preprocessing function to make a mask then finds the largest object within
+    the mask. The moment of the image is calculated and the x, y coordinates of the target's centroid are returned.
+
+    Parameters:
+    im (BGR image): a raw capture from the RPi camera module
+    color (string): selects the color of the target. Accepts "B", "G", or "R"
+
+    Returns:
+    N/A
+
+    """
+
     # Input image is first put through pre-processing to create a binary image mask isolating the target
     im_mask = preprocess(im, color)
     # The contours of the image are calculated by the findContours function. This finds the all of the border lines
@@ -79,11 +129,15 @@ def find_centroid(im, color):
     if len(all_contours) > 0:
         # We find the biggest contour within the set found and assume that it is the target
         biggest_contour = max(all_contours, key=cv2.contourArea)
-        # calculate the moment of the biggest contour
+        # We then calculate the moments of the polygonal contour we selected
         contour_moments = cv2.moments(biggest_contour)
-        # calculated the centroid location of the blob from the moment from
+        # We then take the first moment of x and divide it by the area ('m00')
+        # We do the same for y
         x = int(contour_moments["m10"] / contour_moments["m00"])
         y = int(contour_moments["m01"] / contour_moments["m00"])
+        # Since we are working with a polygon this gives the x and y coordinates of the
+        # centroid within the image, in pixels
+        # this coordinate is relative to the resolution of the image
         return x, y
 
     else:
