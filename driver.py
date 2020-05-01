@@ -21,7 +21,6 @@ import image_processing
 import picamera
 import picamera.array
 
-ready_flag = False
 centroid_x = -1
 res = (1280, 720)
 
@@ -63,7 +62,7 @@ def image_processor(col):
     # wait for camera to warm up
     time.sleep(2.0)
 
-    ready_flag = True
+    print("starting image_processing")
     # Capture video one frame at a time while the RPi continues to provide a video feed
     for frame in cam.capture_continuous(cap, format='bgr', use_video_port=True):
         # pull a frame from the capture stream
@@ -106,10 +105,9 @@ def vehicle_control():
     lat_r = 3*lat_l
     # the motor driver object is initialized as 'vehicle'
     vehicle = motor.L298N()
-
+    # wait for controller to warm up
     time.sleep(5)
-    # while ~ready_flag:
-    #     time.sleep(0.1)
+    print("Starting vehicle_control")
 
     try:
         # set speed and turn rate
@@ -133,17 +131,15 @@ def vehicle_control():
                 # If the target is in the left hand portion of the frame turn left
                 if centroid_x <= lat_l:
                     vehicle.turn_l(speed, turn_rate)
-                    print("left")
 
                 # If the target is in the right hand portion of the frame turn right
                 elif centroid_x >= lat_r:
                     vehicle.turn_r(speed, turn_rate)
-                    print("right")
 
                 # If the target is in the center of the frame go straight forward
                 elif lat_l < centroid_x < lat_r:
                     vehicle.forward(speed)
-                    print("forward")
+
     # A try-except block was added to allow for clean shutdown when a keyboard interrupt (^C) was issued
     except KeyboardInterrupt:
         # In this case the GPIO used for the motor driver is de-allocated

@@ -13,7 +13,7 @@
 #              A commonly available motor controller topology.
 #
 # ******************************************************************
-
+import time
 import driver
 import threading
 
@@ -29,6 +29,7 @@ target_color = input("What color target (R, G, or B)?  ")
 # position asynchronously. This thread is automatically killed when main is killed
 im_proc = threading.Thread(target=driver.image_processor, args=target_color, daemon=True)
 
+time.sleep(10)
 # Start the image_processing thread
 im_proc.start()
 

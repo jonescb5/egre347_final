@@ -16,6 +16,7 @@
 
 import RPi.GPIO as GPIO
 
+
 # L298N Motor Driver Class
 class L298N:
     def __init__(self):
@@ -71,7 +72,6 @@ class L298N:
         self.spa.ChangeDutyCycle(speed)
         self.spb.ChangeDutyCycle(speed)
 
-
     def turn_l(self, speed, turn_rate):
         """
         Turn left while driving forward
@@ -85,7 +85,6 @@ class L298N:
         GPIO.output(self.in4, GPIO.LOW)
         self.spa.ChangeDutyCycle(turn_rate)
         self.spb.ChangeDutyCycle(speed)
-
 
     def turn_r(self, speed, turn_rate):
         """
@@ -152,8 +151,6 @@ class L298N:
         GPIO.output(self.in2, GPIO.LOW)
         GPIO.output(self.in3, GPIO.LOW)
         GPIO.output(self.in4, GPIO.LOW)
-
-        return
 
     def shutdown(self):
         """
